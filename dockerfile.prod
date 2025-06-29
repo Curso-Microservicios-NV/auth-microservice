@@ -1,0 +1,51 @@
+# ==========================
+# Dependencies
+# ==========================
+FROM node:18-alpine3.15 AS deps
+
+WORKDIR /usr/src/app
+
+COPY package.json package-lock.json ./
+
+RUN npm install
+
+# ==========================
+# Builder
+# ==========================
+FROM node:18-alpine3.15 AS build
+
+WORKDIR /usr/src/app
+
+# Copy node_modules directory from deps module
+COPY --from=deps /usr/src/app/node_modules ./node_modules
+
+# Copy source code of the app, except for the ones in .dockerignore 
+COPY . .
+
+# RUN npm run test
+RUN npm run build
+
+RUN npm ci -f --only=production && npm cache clean --force
+
+RUN npx prisma generate
+
+# ==========================
+# Production Docker image 
+# ==========================
+FROM node:18-alpine3.15 AS prod
+
+WORKDIR /usr/src/app
+
+# Copy node_modules directory from build module
+COPY --from=build /usr/src/app/node_modules ./node_modules
+
+# Copy dist directory from build module
+COPY --from=build /usr/src/app/dist ./dist
+
+ENV NODE_ENV=production
+
+USER node
+
+EXPOSE 3000
+
+CMD [ "node", "dist/main.js" ]
