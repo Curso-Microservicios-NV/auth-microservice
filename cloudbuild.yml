@@ -17,3 +17,8 @@ steps:
         "push",
         "southamerica-east1-docker.pkg.dev/tienda-microservicios-464423/image-registry/auth-ms",
       ]
+
+serviceAccount: "905360638325-compute@developer.gserviceaccount.com"
+
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
