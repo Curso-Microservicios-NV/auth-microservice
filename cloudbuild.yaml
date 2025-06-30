@@ -5,7 +5,7 @@ steps:
       [
         "build",
         "-t",
-        southamerica-east1-docker.pkg.dev/tienda-microservicios-464423/image-registry/auth-ms",
+        "southamerica-east1-docker.pkg.dev/tienda-microservicios-464423/image-registry/auth-ms",
         "-f",
         "dockerfile.prod",
         "--platform=linux/amd64",
